@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <!-- WIZARD FORM VIEWS -->
+<record id="confirm_make_call_wizard_form_view" model="ir.ui.view">
+    <field name="name">confirm.make.call.wizard.form</field>
+    <field name="model">confirm.make.call.wizard</field>
+    <field name="arch" type="xml">
+        <form string="Make call">
+            <group>
+                <field name="message" nolabel="1"/>
+            </group>
+            <footer>
+                <button string="Call" type="object" name="make_call" class="btn btn-primary"/>
+                <button string="Cancel" special="cancel"/>
+            </footer>
+        </form>
+    </field>
+</record>
+
+</odoo>

@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+
+<record id="view_task_form2_inherit" model="ir.ui.view">
+    <field name="name">view_task_form2_inherit</field>
+    <field name="model">project.task</field>
+    <field name="inherit_id" ref="double_m_contacts.view_task_form_inherit"/>
+    <field name="arch" type="xml">
+        <xpath expr="//header" position="inside">
+            <button name="action_make_biz_call" string="Make a call" type="object" class="oe_highlight" invisible="current_user_country == 'vietnam'"/>
+        </xpath>
+        <xpath expr="//field[@name='contact_phone']" position="replace">
+            <field name="contact_phone" invisible="current_user_country == 'vietnam'"/>
+            <field name="contact_phone_gcalls" widget="outbound_call" invisible="current_user_country == 'indo'"/>
+        </xpath>
+    </field>
+</record>
+
+</odoo>

@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_contact_to_task_wizard,access_contact_to_task_wizard,model_contact_to_task_wizard,,1,1,1,1
+access_contact_line_wizard,access_contact_line_wizard,model_contact_line,,1,1,1,1
+access_contact_to_task_confirm_wizard,access_contact_to_task_confirm_wizard,model_contact_to_task_confirm_wizard,,1,1,1,1
+access_success_notification_wizard,access_success_notification_wizard,model_success_notification_wizard,,1,1,1,1

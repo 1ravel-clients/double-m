@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+<record id="view_users_form_inherit" model="ir.ui.view">
+    <field name="name">view_users_form_inherit</field>
+    <field name="model">res.users</field>
+    <field name="inherit_id" ref="base.view_users_form"/>
+    <field name="arch" type="xml">
+        <xpath expr="//page[@name='access_rights']/group" position="replace">
+           <group>
+                <group string="Multi Companies" invisible="companies_count &lt;= 1">
+                    <field string="Allowed Companies" name="company_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                    <field string="Default Company" name="company_id" context="{'user_preference': 0}"/>
+                    <field string="Companies count" name="companies_count" invisible="1"/>
+                </group>
+                <group string="Call API configuration">
+                    <field name="country"/>
+                    <field name="extension" invisible="country != 'indo'"/>
+                </group>
+           </group>
+        </xpath>
+    </field>
+</record>
+
+</odoo>

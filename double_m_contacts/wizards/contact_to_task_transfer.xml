@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+<record id="contact_to_task_action" model="ir.actions.server">
+    <field name="name">Convert to tasks</field>
+    <field name="model_id" ref="base.model_res_partner"/>
+    <field name="binding_model_id" ref="base.model_res_partner"/>
+    <field name="state">code</field>
+    <field name="code">
+        if records:
+            action = records.open_contact_to_task_wizard()
+    </field>
+</record>
+
+<!-- WIZARD FORM VIEWS -->
+<record id="contact_to_task_wizard_form_view" model="ir.ui.view">
+    <field name="name">contact.to.task.wizard.form</field>
+    <field name="model">contact.to.task.wizard</field>
+    <field name="arch" type="xml">
+        <form string="Convert to tasks">
+            <group>
+                <field name="project_id"/>
+                <field name="project_stage"/>
+                <field name="date_deadline"/>
+            </group>
+
+            <footer>
+                <button string="Convert" type="object" name="contact_to_task_action" class="btn btn-primary"/>
+                <button string="Cancel" special="cancel"/>
+            </footer>
+        </form>
+    </field>
+</record>
+
+<record id="contact_to_task_wizard_confirm_view" model="ir.ui.view">
+    <field name="name">contact.to.task.wizard.confirm.view</field>
+    <field name="model">contact.to.task.confirm.wizard</field>
+    <field name="arch" type="xml">
+        <form string="Confirm convert to tasks">
+            <group>
+                <field name="message" nolabel="1"/>
+            </group>
+            <footer>
+                <button string="Still Convert" type="object" name="contact_to_task_confirm_action" class="btn btn-primary"/>
+                <button string="Cancel" special="cancel"/>
+            </footer>
+        </form>
+    </field>
+</record>
+
+<record id="notification_view" model="ir.ui.view">
+    <field name="name">notification.view</field>
+    <field name="model">success.notification.wizard</field>
+    <field name="arch" type="xml">
+        <form string="Successfully imported">
+            <group>
+                <field name="message" nolabel="1"/>
+            </group>
+            <footer>
+                <button string="Cancel" special="cancel" invisible="1"/>
+            </footer>
+        </form>
+    </field>
+</record>
+
+</odoo>

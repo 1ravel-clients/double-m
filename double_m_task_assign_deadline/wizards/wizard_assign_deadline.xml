@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+<record id="assign_deadline_action" model="ir.actions.server">
+    <field name="name">Assign deadline for tasks</field>
+    <field name="model_id" ref="project.model_project_task"/>
+    <field name="binding_model_id" ref="project.model_project_task"/>
+    <field name="state">code</field>
+    <field name="code">
+        if records:
+            action = records.open_assign_deadline_to_task_wizard()
+    </field>
+</record>
+
+<!-- WIZARD FORM VIEWS -->
+<record id="assign_deadline_to_task_wizard_form_view" model="ir.ui.view">
+    <field name="name">assign.deadline.to.task.wizard.form</field>
+    <field name="model">assign.deadline.to.task.wizard</field>
+    <field name="arch" type="xml">
+        <form string="Assign deadline to tasks">
+            <group>
+                <field name="date_deadline"/>
+            </group>
+
+            <footer>
+                <button string="Assign" type="object" name="assign_deadline_to_task_action" class="btn btn-primary"/>
+                <button string="Cancel" special="cancel"/>
+            </footer>
+        </form>
+    </field>
+</record>
+
+
+</odoo>
