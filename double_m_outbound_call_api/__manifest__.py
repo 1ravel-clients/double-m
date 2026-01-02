@@ -21,7 +21,7 @@
     ],
     'assets': {
         'web.assets_backend': [
-            'double_m_outbound_call_api/static/src/js/outbound_call.js',
+            # 'double_m_outbound_call_api/static/src/js/outbound_call.js',
         ],
     },
     'installable': True,

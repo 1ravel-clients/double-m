@@ -19,16 +19,16 @@
         <xpath expr="//notebook" position="inside">
            <page name="contact" string="Contacts &amp; Addresses">
                 <field name="contact_info_ids">
-                    <list editable="bottom" create="false">
-                        <field name="name"/>
-                        <field name="current_user_id" invisible="1"/>
-                        <field name="current_user_country" invisible="1"/>
-                        <field name="phone" />
-                    </list>
+<!--                    <list editable="bottom" create="false">-->
+<!--                        <field name="name"/>-->
+<!--                        <field name="current_user_id" invisible="1"/>-->
+<!--                        <field name="current_user_country" invisible="1"/>-->
+<!--                        <field name="phone" />-->
+<!--                    </list>-->
 
-                    <kanban>
-                        <field name="id"/>
+                    <kanban color="color">
                         <field name="color"/>
+                        <field name="avatar_128"/>
                         <field name="name"/>
                         <field name="type"/>
                         <field name="email"/>
@@ -48,35 +48,33 @@
                         <field name="comment"/>
                         <field name="display_name"/>
                         <templates>
-                            <t t-name="kanban-box">
-                                <t t-set="color" t-value="kanban_color(record.color.raw_value)"/>
-                                <div t-att-class="color + ' oe_kanban_global_click'">
-                                    <div class="o_kanban_image">
-                                        <img alt="Contact image" t-if="record.image_128.raw_value" t-att-src="kanban_image('res.partner', 'image_128', record.id.raw_value)"/>
-                                        <t t-if="!record.image_128.raw_value">
-                                            <img alt="Delivery" t-if="record.type.raw_value === 'delivery'" t-att-src="_s + &quot;/base/static/img/truck.png&quot;"/>
-                                            <img alt="Invoice" t-if="record.type.raw_value === 'invoice'" t-att-src="_s + &quot;/base/static/img/money.png&quot;"/>
-                                            <t t-if="record.type.raw_value !== 'invoice' &amp;&amp; record.type.raw_value !== 'delivery'">
-                                                <img alt="Logo" t-if="record.is_company.raw_value === true" t-att-src="_s + &quot;/base/static/img/company_image.png&quot;"/>
-                                                <img alt="Avatar" t-if="record.is_company.raw_value === false" t-att-src="_s + &quot;/base/static/img/avatar_grey.png&quot;"/>
-                                            </t>
-                                        </t>
+                            <t t-name="card" class="flex-row">
+                                <aside class="o_kanban_aside_full">
+                                    <field name="avatar_128" class="o_kanban_image_fill w-100" widget="image" options="{'img_class': 'object-fit-cover'}" alt="Contact image" invisible="type != 'contact'"/>
+                                    <field name="avatar_128" class="o_kanban_image_fill w-100" widget="image" options="{'img_class': 'object-fit-contain p-2'}" alt="Contact image" invisible="type == 'contact'"/>
+                                </aside>
+                                <main class="ps-2 ps-md-0">
+                                    <field name="name" invisible="not name" class="fw-bold"/>
+                                    <field name="type" invisible="name" class="fw-bold"/>
+                                    <div t-if="record.email.raw_value" class="text-truncate">
+                                        <i class="fa fa-fw me-1 fa-envelope text-primary" title="Email"/>
+                                        <field name="email"/>
                                     </div>
-                                    <div class="oe_kanban_details">
-                                        <field name="name"/>
-                                        <div t-if="record.function.raw_value"><field name="function"/></div>
-                                        <div t-if="record.email.raw_value"><field name="email" widget="email"/></div>
-                                        <div t-if="record.type.raw_value != 'contact'">
-                                            <div>
-                                                <field name="zip"/>
-                                                <field name="city"/>
-                                            </div>
-                                            <field t-if="record.state_id.raw_value" name="state_id"/>
-                                            <field name="country_id"/>
-                                        </div>
-                                        <div t-if="record.phone.raw_value">Phone: <t t-esc="record.phone.value"/></div>
+                                    <div t-if="record.phone.raw_value">
+                                        <i class="fa fa-fw me-1 fa-phone text-primary" title="Phone"/>
+                                        <field name="phone"/>
                                     </div>
-                                </div>
+                                    <div invisible="not function or is_company">
+                                        <i class="fa fa-fw me-1 fa-suitcase text-primary" title="Position"/>
+                                        <field name="function"/>
+                                    </div>
+                                    <div t-if="record.type.raw_value != 'contact' and (record.city.raw_value or record.country_id.raw_value)">
+                                        <i class="fa fa-fw me-1 fa-map-marker text-primary" title="Location"/>
+                                        <field name="city"/>
+                                        <span t-if="record.city.raw_value and record.country_id.raw_value">, </span>
+                                        <field name="country_id"/>
+                                    </div>
+                                </main>
                             </t>
                         </templates>
                     </kanban>
@@ -125,26 +123,6 @@
                             <field name="image_128" invisible="1"/>
                         </sheet>
                     </form>
-
-
-
-                    <!-- <form string="Contact information">
-                        <header>
-                            <field name="current_user_id" invisible="1"/>
-                            <field name="current_user_country" invisible="1"/>
-
-                        </header>
-                        <sheet>
-                            <group>
-                                <field name="name"/>
-                                <field name="phone" attrs="{'invisible': [('current_user_country', '=', 'vietnam')]}"/>
-                                <field name="contact_phone_gcalls" widget="outbound_call" attrs="{'invisible': [('current_user_country', '=', 'indo')]}"/>
-                            </group>
-                            <group>
-                                <button name="action_make_biz_call" type="object" string="Make Call" class="oe_highlight" attrs="{'invisible': [('current_user_country', '=', 'vietnam')]}"/>
-                            </group>
-                        </sheet>
-                    </form> -->
                 </field>
            </page>
         </xpath>
