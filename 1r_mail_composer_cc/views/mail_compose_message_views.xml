@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_mail_compose_message_cc" model="ir.ui.view">
+        <field name="name">mail.compose.message.cc</field>
+        <field name="model">mail.compose.message</field>
+        <field name="inherit_id" ref="mail.email_compose_message_wizard_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='subject']" position="before">
+                <label for="partner_cc_ids" string="Cc"
+                    invisible="composition_mode != 'comment' or subtype_is_log"/>
+                <div invisible="composition_mode != 'comment' or subtype_is_log">
+                    <field name="partner_cc_ids"
+                        widget="many2many_tags_email"
+                        placeholder="Add CC recipients..."
+                        options="{'edit_tags': True}"
+                        context="{'force_email': True, 'show_email': True,
+                                  'form_view_ref': 'base.view_partner_simple_form'}"/>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>
