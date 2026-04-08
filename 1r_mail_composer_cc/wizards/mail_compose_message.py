@@ -11,19 +11,13 @@ class MailComposeMessage(models.TransientModel):
         string='Cc',
     )
 
-    def _prepare_mail_values_rendered(self, res_ids):
-        """Add email_cc from partner_cc_ids to the mail values."""
-        results = super()._prepare_mail_values_rendered(res_ids)
+    def _action_send_mail_comment(self, res_ids):
+        """Pass CC partner emails through context for the notification hook."""
         if self.partner_cc_ids:
             email_cc = ', '.join(
                 tools.formataddr((p.name or '', p.email or ''))
                 for p in self.partner_cc_ids
                 if p.email
             )
-            for res_id in res_ids:
-                existing_cc = results[res_id].get('email_cc', '')
-                if existing_cc:
-                    results[res_id]['email_cc'] = f'{existing_cc}, {email_cc}'
-                else:
-                    results[res_id]['email_cc'] = email_cc
-        return results
+            self = self.with_context(composer_email_cc=email_cc)
+        return super()._action_send_mail_comment(res_ids)
