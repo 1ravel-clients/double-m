@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Show project_template_id when service_tracking='no' (deferred creation) -->
+    <record id="product_template_form_deferred_project" model="ir.ui.view">
+        <field name="name">product.template.form.deferred.project</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="sale_project.product_template_form_view_invoice_policy_inherit_sale_project"/>
+        <field name="arch" type="xml">
+            <!-- Make project_template_id label visible for 'no' too -->
+            <xpath expr="//div[hasclass('o_td_label')][.//label[@for='project_template_id']]" position="attributes">
+                <attribute name="invisible">service_tracking not in ['no', 'task_in_project', 'project_only']</attribute>
+            </xpath>
+            <!-- Make project_template_id field visible for 'no' too -->
+            <xpath expr="//field[@name='project_template_id']" position="attributes">
+                <attribute name="invisible">service_tracking not in ['no', 'task_in_project', 'project_only']</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>
