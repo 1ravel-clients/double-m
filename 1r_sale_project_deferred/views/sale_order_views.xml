@@ -6,17 +6,17 @@
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
             <!-- Hide "Delivered" column by default (services company) -->
-            <xpath expr="//field[@name='order_line']//field[@name='qty_delivered']" position="attributes">
+            <xpath expr="//field[@name='order_line']//list//field[@name='qty_delivered']" position="attributes">
                 <attribute name="optional">hide</attribute>
             </xpath>
 
-            <!-- Add "Paid" column after "Invoiced" -->
-            <xpath expr="//field[@name='order_line']//field[@name='qty_invoiced']" position="after">
+            <!-- Add "Paid" column after "Invoiced" in the list -->
+            <xpath expr="//field[@name='order_line']//list//field[@name='qty_invoiced']" position="after">
                 <field name="amount_paid" string="Paid" optional="show"/>
             </xpath>
 
-            <!-- Add Project link + Create Project button before price -->
-            <xpath expr="//field[@name='order_line']//field[@name='price_unit']" position="before">
+            <!-- Add Project link + Create Project button before price in the list -->
+            <xpath expr="//field[@name='order_line']//list//field[@name='price_unit']" position="before">
                 <field name="project_id" string="Project" optional="show"
                     groups="project.group_project_user"
                     readonly="1"
