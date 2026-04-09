@@ -23,8 +23,8 @@
                     widget="many2one"
                     invisible="not project_id"/>
                 <button name="action_create_project_wizard" type="object"
-                    string="+ Project"
-                    class="btn-link text-primary p-0"
+                    string="Create Project"
+                    class="btn btn-outline-primary btn-sm"
                     invisible="project_id or not product_id"
                     groups="project.group_project_user"/>
             </xpath>
