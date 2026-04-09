@@ -31,10 +31,9 @@ class CreateProjectLineWizard(models.TransientModel):
     def _compute_project_name(self):
         for wiz in self:
             sol = wiz.sale_line_id
-            if sol.order_id.client_order_ref:
-                wiz.project_name = '%s - %s' % (sol.order_id.client_order_ref, sol.order_id.name)
-            else:
-                wiz.project_name = sol.order_id.name or ''
+            so_name = sol.order_id.name or ''
+            product_name = sol.product_id.name or ''
+            wiz.project_name = '%s - %s' % (so_name, product_name)
 
     @api.depends('sale_line_id')
     def _compute_payment_warning(self):
