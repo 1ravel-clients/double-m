@@ -15,16 +15,16 @@
                 <field name="amount_paid" string="Paid" optional="show"/>
             </xpath>
 
-            <!-- Add Project link + Create Project button before price in the list -->
-            <xpath expr="//field[@name='order_line']//list//field[@name='price_unit']" position="before">
+            <!-- Add Project column right after the product name -->
+            <xpath expr="//field[@name='order_line']//list//field[@name='product_template_id']" position="after">
                 <field name="project_id" string="Project" optional="show"
                     groups="project.group_project_user"
                     readonly="1"
+                    widget="many2one"
                     invisible="not project_id"/>
                 <button name="action_create_project_wizard" type="object"
-                    title="Create Project"
-                    icon="fa-plus-circle"
-                    class="btn-link text-primary"
+                    string="+ Project"
+                    class="btn-link text-primary p-0"
                     invisible="project_id or not product_id"
                     groups="project.group_project_user"/>
             </xpath>

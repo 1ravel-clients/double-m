@@ -9,18 +9,32 @@ class CreateProjectLineWizard(models.TransientModel):
     _description = 'Create Project for Sale Order Line'
 
     sale_line_id = fields.Many2one('sale.order.line', required=True, readonly=True)
+    project_name = fields.Char(
+        string='Project Name',
+        compute='_compute_project_name',
+        store=True,
+        readonly=False,
+    )
     project_template_id = fields.Many2one(
         'project.project',
         string='Project Template',
         domain="[('is_template', '=', True)]",
-        required=True,
     )
     payment_warning = fields.Char(compute='_compute_payment_warning')
     task_tree_html = fields.Html(
-        string='Task Preview',
+        string='Tasks Preview',
         compute='_compute_task_tree_html',
         sanitize=False,
     )
+
+    @api.depends('sale_line_id')
+    def _compute_project_name(self):
+        for wiz in self:
+            sol = wiz.sale_line_id
+            if sol.order_id.client_order_ref:
+                wiz.project_name = '%s - %s' % (sol.order_id.client_order_ref, sol.order_id.name)
+            else:
+                wiz.project_name = sol.order_id.name or ''
 
     @api.depends('sale_line_id')
     def _compute_payment_warning(self):
@@ -43,13 +57,19 @@ class CreateProjectLineWizard(models.TransientModel):
         for wiz in self:
             template = wiz.project_template_id
             if not template:
-                wiz.task_tree_html = False
+                wiz.task_tree_html = Markup(
+                    '<div style="padding:16px 0;color:#888;font-style:italic;">'
+                    'No template selected — an empty project will be created.'
+                    '</div>'
+                )
                 continue
 
             tasks = template.sudo().task_ids.sorted(lambda t: (t.sequence, t.id))
             if not tasks:
                 wiz.task_tree_html = Markup(
-                    '<p class="text-muted fst-italic">No tasks in this template.</p>'
+                    '<div style="padding:16px 0;color:#888;font-style:italic;">'
+                    'This template has no tasks.'
+                    '</div>'
                 )
                 continue
 
@@ -61,7 +81,7 @@ class CreateProjectLineWizard(models.TransientModel):
                 if not task.parent_id:
                     roots.append(task)
 
-            wiz.task_tree_html = _render_tree(roots, children_map)
+            wiz.task_tree_html = _render_task_cards(roots, children_map)
 
     def action_create_project(self):
         """Create project + task from template for the SO line."""
@@ -71,17 +91,21 @@ class CreateProjectLineWizard(models.TransientModel):
         if sol.project_id:
             raise UserError(_("A project already exists for this line."))
 
-        # Temporarily set the template on the product if user changed it
+        template = self.project_template_id
         original_template = sol.product_id.project_template_id
-        if self.project_template_id != original_template:
-            sol.product_id.project_template_id = self.project_template_id
+
+        # Set template on product (or clear it for empty project)
+        if template != original_template:
+            sol.product_id.project_template_id = template
 
         try:
             project = sol.sudo()._timesheet_create_project()
+            # Override the auto-generated name with user's choice
+            if self.project_name:
+                project.sudo().name = self.project_name
             sol.sudo()._timesheet_create_task(project)
         finally:
-            # Restore original template
-            if self.project_template_id != original_template:
+            if template != original_template:
                 sol.product_id.project_template_id = original_template
 
         return {
@@ -93,41 +117,53 @@ class CreateProjectLineWizard(models.TransientModel):
         }
 
 
-TREE_CSS = """
-<style>
-.task-tree { font-family: monospace; font-size: 13px; line-height: 1.8; padding: 8px 0; }
-.task-tree .node { display: flex; align-items: baseline; }
-.task-tree .connector { color: #999; white-space: pre; margin-right: 6px; }
-.task-tree .name { color: #333; }
-.task-tree .children { padding-left: 24px; }
-</style>
-"""
+# ---------------------------------------------------------------------------
+# Trello-style task card rendering
+# ---------------------------------------------------------------------------
+
+CARD_STYLE = (
+    'display:inline-block;vertical-align:top;background:#fff;border:1px solid #dee2e6;'
+    'border-radius:8px;padding:10px 14px;margin:4px;min-width:160px;max-width:220px;'
+    'box-shadow:0 1px 2px rgba(0,0,0,.06);'
+)
+CHILD_STYLE = (
+    'font-size:12px;color:#666;margin-top:6px;padding-top:6px;'
+    'border-top:1px solid #eee;'
+)
+CHILD_ITEM_STYLE = 'padding:1px 0;'
+CONTAINER_STYLE = 'display:flex;flex-wrap:wrap;gap:6px;padding:8px 0;'
 
 
-def _render_tree(roots, children_map):
-    """Render a list of root tasks as an HTML tree."""
-    html = Markup(TREE_CSS) + Markup('<div class="task-tree">')
-    for i, task in enumerate(roots):
-        is_last = (i == len(roots) - 1)
-        html += _render_node(task, children_map, is_last)
+def _render_task_cards(roots, children_map):
+    """Render root tasks as Trello-style cards with subtasks listed inside."""
+    html = Markup('<div style="%s">') % CONTAINER_STYLE
+    for task in roots:
+        html += _render_card(task, children_map)
     html += Markup('</div>')
     return html
 
 
-def _render_node(task, children_map, is_last):
-    """Render a single task node with its children."""
-    connector = '└─ ' if is_last else '├─ '
-    html = Markup('<div class="node">')
-    html += Markup('<span class="connector">%s</span>') % connector
-    html += Markup('<span class="name">%s</span>') % escape(task.name)
-    html += Markup('</div>')
+def _render_card(task, children_map):
+    """Render a single task card."""
+    html = Markup('<div style="%s">') % CARD_STYLE
+    html += Markup('<div style="font-weight:600;font-size:13px;">%s</div>') % escape(task.name)
 
     children = children_map.get(task.id, [])
     if children:
-        html += Markup('<div class="children">')
-        for j, child in enumerate(children):
-            child_is_last = (j == len(children) - 1)
-            html += _render_node(child, children_map, child_is_last)
+        html += Markup('<div style="%s">') % CHILD_STYLE
+        for child in children:
+            html += Markup('<div style="%s">') % CHILD_ITEM_STYLE
+            html += Markup('&#8226; %s') % escape(child.name)
+            html += Markup('</div>')
+            # Show grandchildren inline too
+            grandchildren = children_map.get(child.id, [])
+            for gc in grandchildren:
+                html += Markup(
+                    '<div style="%s padding-left:12px;color:#999;">'
+                ) % CHILD_ITEM_STYLE
+                html += Markup('&#8226; %s') % escape(gc.name)
+                html += Markup('</div>')
         html += Markup('</div>')
 
+    html += Markup('</div>')
     return html

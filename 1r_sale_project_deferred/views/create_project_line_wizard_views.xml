@@ -12,14 +12,17 @@
                 </div>
                 <group>
                     <group>
-                        <field name="sale_line_id" readonly="1"/>
+                        <field name="project_name" string="Project Name"/>
                     </group>
                     <group>
                         <field name="project_template_id"
-                            context="{'active_test': False}"/>
+                            string="Template"
+                            context="{'active_test': False}"
+                            placeholder="Empty project (no tasks)"/>
                     </group>
                 </group>
-                <separator string="Tasks in Template"/>
+                <field name="sale_line_id" invisible="1"/>
+                <separator string="Tasks Preview"/>
                 <field name="task_tree_html" nolabel="1" readonly="1"/>
                 <footer>
                     <button name="action_create_project"
