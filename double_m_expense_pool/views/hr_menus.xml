@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_expense_pool"
+        name="Expense Pool"
+        parent="hr.menu_hr_root"
+        action="action_expense_pool"
+        sequence="25"
+        groups="hr.group_hr_user"/>
+</odoo>
