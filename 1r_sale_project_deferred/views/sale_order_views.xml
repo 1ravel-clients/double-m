@@ -34,8 +34,8 @@
                     invisible="project_id or not product_id or not id"
                     groups="project.group_project_user"/>
                 <field name="project_progress" widget="percentpie"
-                    string="Progress"
-                    optional="show"
+                    string=" "
+                    nolabel="1"
                     class="d-flex justify-content-start"
                     invisible="not project_id"
                     groups="project.group_project_user"/>
