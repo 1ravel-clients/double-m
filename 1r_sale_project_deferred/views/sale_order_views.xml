@@ -22,12 +22,15 @@
 
             <!-- "Project" column: buttons -->
             <xpath expr="//field[@name='order_line']//list//field[@name='product_template_id']" position="after">
-                <!-- "Project" column: shows project name or Create button -->
+                <!-- "Project" column: invisible field provides the header -->
                 <field name="project_id" string="Project" optional="show"
                     groups="project.group_project_user"
-                    readonly="1"
-                    widget="many2one"
-                    invisible="not project_id"/>
+                    column_invisible="0" invisible="1"/>
+                <button name="action_open_project" type="object"
+                    string="Open Project"
+                    class="btn btn-outline-primary btn-sm"
+                    invisible="not project_id"
+                    groups="project.group_project_user"/>
                 <button name="action_create_project_wizard" type="object"
                     string="Create Project"
                     class="btn btn-primary btn-sm"
