@@ -14,15 +14,21 @@ class SaleOrderLine(models.Model):
         compute='_compute_amount_paid',
         currency_field='currency_id',
     )
+    payment_percentage = fields.Integer(
+        string='Paid %',
+        compute='_compute_amount_paid',
+    )
 
     def _compute_amount_paid(self):
         for sol in self:
             invoices = sol.invoice_lines.mapped('move_id').filtered(
                 lambda m: m.state == 'posted' and m.move_type == 'out_invoice'
             )
-            sol.amount_paid = sum(
+            paid = sum(
                 inv.amount_total - inv.amount_residual for inv in invoices
             )
+            sol.amount_paid = paid
+            sol.payment_percentage = round(paid * 100 / sol.price_total) if sol.price_total else 0
 
     def action_open_project(self):
         """Navigate to the linked project."""

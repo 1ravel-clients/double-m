@@ -10,9 +10,14 @@
                 <attribute name="optional">hide</attribute>
             </xpath>
 
-            <!-- Add "Paid" column after "Invoiced" in the list -->
+            <!-- Add "Paid" columns after "Invoiced" in the list -->
             <xpath expr="//field[@name='order_line']//list//field[@name='qty_invoiced']" position="after">
-                <field name="amount_paid" string="Paid" optional="show"/>
+                <field name="amount_paid" string="Paid" optional="show"
+                    decoration-success="payment_percentage &gt;= 100"
+                    decoration-warning="payment_percentage &gt; 0 and payment_percentage &lt; 100"
+                    decoration-muted="payment_percentage == 0"/>
+                <field name="payment_percentage" string="Paid %" optional="show"
+                    widget="progressbar"/>
             </xpath>
 
             <!-- Add Project column right after the product name -->
