@@ -4,6 +4,11 @@ from odoo import fields, models
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
 
+    project_progress = fields.Integer(
+        related='project_id.last_update_id.progress',
+        string='Progress',
+    )
+
     amount_paid = fields.Monetary(
         string='Paid',
         compute='_compute_amount_paid',
