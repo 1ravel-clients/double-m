@@ -8,6 +8,7 @@
     'depends': ['sale_project', 'account'],
     'data': [
         'security/ir.model.access.csv',
+        'data/hide_native_create_project.xml',
         'views/product_views.xml',
         'views/create_project_line_wizard_views.xml',
         'views/sale_order_views.xml',
