@@ -22,13 +22,21 @@ class SaleOrderLine(models.Model):
     def _compute_amount_paid(self):
         for sol in self:
             invoices = sol.invoice_lines.mapped('move_id').filtered(
-                lambda m: m.state == 'posted' and m.move_type == 'out_invoice'
+                lambda m: m.state == 'posted'
+                and m.move_type in ('out_invoice', 'out_refund')
             )
-            paid = sum(
-                inv.amount_total - inv.amount_residual for inv in invoices
+            paid = 0.0
+            for inv in invoices:
+                amount = inv.amount_total - inv.amount_residual
+                if inv.move_type == 'out_refund':
+                    paid -= amount
+                else:
+                    paid += amount
+            sol.amount_paid = max(paid, 0.0)
+            sol.payment_percentage = (
+                min(round(paid * 100 / sol.price_total), 100)
+                if sol.price_total else 0
             )
-            sol.amount_paid = paid
-            sol.payment_percentage = round(paid * 100 / sol.price_total) if sol.price_total else 0
 
     def action_open_project(self):
         """Navigate to the linked project."""

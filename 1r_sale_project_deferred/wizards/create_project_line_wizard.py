@@ -83,29 +83,51 @@ class CreateProjectLineWizard(models.TransientModel):
             wiz.task_tree_html = _render_task_cards(roots, children_map)
 
     def action_create_project(self):
-        """Create project + task from template for the SO line."""
+        """Create project from template without mutating the product record."""
         self.ensure_one()
-        sol = self.sale_line_id
+        sol = self.sale_line_id.sudo()
 
         if sol.project_id:
             raise UserError(_("A project already exists for this line."))
 
+        # Build project values using the native helper
+        values = sol._timesheet_create_project_prepare_values()
+        values['name'] = self.project_name or values['name']
+
         template = self.project_template_id
-        original_template = sol.product_id.project_template_id
+        if template:
+            # Copy from template (same as native _timesheet_create_project)
+            if template.is_template:
+                project = template.action_create_from_template(values)
+            else:
+                project = template.copy(values)
+            project.tasks.write({
+                'sale_line_id': sol.id,
+                'partner_id': sol.order_id.partner_id.id,
+            })
+            project.tasks.filtered('parent_id').write({
+                'sale_line_id': sol.id,
+                'sale_order_id': sol.order_id.id,
+            })
+        else:
+            # Create empty project
+            project = self.env['project.project'].sudo().create(values)
 
-        # Set template on product (or clear it for empty project)
-        if template != original_template:
-            sol.product_id.project_template_id = template
+        # Create default stages if none
+        if not project.type_ids:
+            project.type_ids = self.env['project.task.type'].sudo().create([
+                {'name': _('To Do'), 'fold': False, 'sequence': 5},
+                {'name': _('In Progress'), 'fold': False, 'sequence': 10},
+                {'name': _('Done'), 'fold': False, 'sequence': 15},
+                {'name': _('Cancelled'), 'fold': True, 'sequence': 20},
+            ])
 
-        try:
-            project = sol.sudo()._timesheet_create_project()
-            # Override the auto-generated name with user's choice
-            if self.project_name:
-                project.sudo().name = self.project_name
-            sol.sudo()._timesheet_create_task(project)
-        finally:
-            if template != original_template:
-                sol.product_id.project_template_id = original_template
+        # Link project to SO line (same as native)
+        sol.write({'project_id': project.id})
+        project.reinvoiced_sale_order_id = sol.order_id
+
+        # Create task in the project
+        sol._timesheet_create_task(project)
 
         return {
             'type': 'ir.actions.act_window',
