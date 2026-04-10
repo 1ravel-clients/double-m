@@ -20,20 +20,19 @@
                     widget="percentpie"/>
             </xpath>
 
-            <!-- "Project" column: buttons -->
+            <!-- Project buttons + progress after product name -->
             <xpath expr="//field[@name='order_line']//list//field[@name='product_template_id']" position="after">
-                <!-- "Project" column: link when exists, button when not -->
-                <field name="project_id" string="Project" optional="show"
-                    groups="project.group_project_user"
-                    readonly="1"
-                    widget="many2one"
-                    invisible="not project_id"/>
+                <field name="project_id" column_invisible="1"/>
+                <button name="action_open_project" type="object"
+                    string="Open Project"
+                    class="btn btn-outline-primary btn-sm"
+                    invisible="not project_id"
+                    groups="project.group_project_user"/>
                 <button name="action_create_project_wizard" type="object"
                     string="Create Project"
                     class="btn btn-primary btn-sm"
                     invisible="project_id or not product_id or not id"
                     groups="project.group_project_user"/>
-                <!-- "Progress" column: percentpie -->
                 <field name="project_progress" widget="percentpie"
                     string="Progress"
                     optional="show"
