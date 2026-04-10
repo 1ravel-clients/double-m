@@ -34,8 +34,9 @@
                     invisible="project_id or not product_id or not id"
                     groups="project.group_project_user"/>
                 <field name="project_progress" widget="percentpie"
-                    string=""
+                    string=" "
                     nolabel="1"
+                    class="text-start"
                     invisible="not project_id"
                     groups="project.group_project_user"/>
             </xpath>
