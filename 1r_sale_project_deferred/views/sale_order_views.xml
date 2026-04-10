@@ -24,7 +24,7 @@
                     invisible="not project_id"/>
                 <button name="action_create_project_wizard" type="object"
                     string="Create Project"
-                    class="btn btn-outline-primary btn-sm"
+                    class="btn btn-outline-primary btn-sm float-start"
                     invisible="project_id or not product_id"
                     groups="project.group_project_user"/>
             </xpath>
