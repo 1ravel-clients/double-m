@@ -17,14 +17,15 @@
 
             <!-- Add Project column right after the product name -->
             <xpath expr="//field[@name='order_line']//list//field[@name='product_template_id']" position="after">
-                <field name="project_id" string="Project" optional="show"
-                    groups="project.group_project_user"
-                    readonly="1"
-                    widget="many2one"
-                    invisible="not project_id"/>
+                <field name="project_id" column_invisible="1"/>
+                <button name="action_open_project" type="object"
+                    icon="fa-folder-open"
+                    class="btn btn-outline-primary btn-sm float-start"
+                    invisible="not project_id"
+                    groups="project.group_project_user"/>
                 <button name="action_create_project_wizard" type="object"
                     string="Create Project"
-                    class="btn btn-outline-primary btn-sm float-start"
+                    class="btn btn-primary btn-sm float-start"
                     invisible="project_id or not product_id"
                     groups="project.group_project_user"/>
             </xpath>

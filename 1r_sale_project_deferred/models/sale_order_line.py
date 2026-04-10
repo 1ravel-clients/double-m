@@ -19,6 +19,17 @@ class SaleOrderLine(models.Model):
                 inv.amount_total - inv.amount_residual for inv in invoices
             )
 
+    def action_open_project(self):
+        """Navigate to the linked project."""
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'project.project',
+            'res_id': self.project_id.id,
+            'view_mode': 'form',
+            'target': 'current',
+        }
+
     def action_create_project_wizard(self):
         """Open the per-line project creation wizard."""
         self.ensure_one()
