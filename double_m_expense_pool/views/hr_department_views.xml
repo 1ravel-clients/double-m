@@ -21,7 +21,7 @@
             <list create="0" edit="0" delete="0">
                 <field name="name" string="Department"/>
                 <field name="total_employee" string="Headcount" sum="Total"/>
-                <field name="headcount_percentage" string="%" widget="percentpie"/>
+                <field name="headcount_percentage" string="%" widget="percentpie" sum="Total"/>
                 <field name="analytic_account_id" string="Analytic Account"/>
             </list>
         </field>
