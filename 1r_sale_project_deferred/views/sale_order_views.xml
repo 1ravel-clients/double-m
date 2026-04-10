@@ -17,7 +17,7 @@
                     decoration-warning="payment_percentage &gt; 0 and payment_percentage &lt; 100"
                     decoration-muted="payment_percentage == 0"/>
                 <field name="payment_percentage" string="Paid %" optional="show"
-                    widget="progressbar"/>
+                    widget="percentpie"/>
             </xpath>
 
             <!-- Add Project column right after the product name -->
