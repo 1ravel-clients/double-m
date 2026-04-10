@@ -23,18 +23,19 @@
             <!-- Add Project column right after the product name -->
             <xpath expr="//field[@name='order_line']//list//field[@name='product_template_id']" position="after">
                 <field name="project_id" column_invisible="1"/>
-                <field name="project_progress" widget="gauge"
-                    invisible="not project_id"
-                    groups="project.group_project_user"
-                    options="{'max_value': 100}"/>
                 <button name="action_open_project" type="object"
                     string="Open Project"
-                    class="btn btn-outline-primary btn-sm float-start"
+                    class="btn btn-outline-primary btn-sm"
                     invisible="not project_id"
                     groups="project.group_project_user"/>
+                <field name="project_progress" widget="gauge"
+                    string=" "
+                    invisible="not project_id"
+                    groups="project.group_project_user"
+                    options="{'max_value': 100, 'label': ' '}"/>
                 <button name="action_create_project_wizard" type="object"
                     string="Create Project"
-                    class="btn btn-primary btn-sm float-start"
+                    class="btn btn-primary btn-sm"
                     invisible="project_id or not product_id or not id"
                     groups="project.group_project_user"/>
             </xpath>
