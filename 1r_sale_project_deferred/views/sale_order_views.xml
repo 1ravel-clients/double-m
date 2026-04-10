@@ -38,7 +38,7 @@
                 <field name="project_progress" widget="percentpie"
                     string="Progress"
                     optional="show"
-                    class="text-start"
+                    class="d-flex justify-content-start"
                     invisible="not project_id"
                     groups="project.group_project_user"/>
             </xpath>
