@@ -29,10 +29,11 @@
                     invisible="not project_id"
                     groups="project.group_project_user"/>
                 <field name="project_progress" widget="gauge"
-                    string=" "
+                    string=""
+                    nolabel="1"
                     invisible="not project_id"
                     groups="project.group_project_user"
-                    options="{'max_value': 100, 'label': ' '}"/>
+                    options="{'max_value': 100, 'label': '', 'title': ''}"/>
                 <button name="action_create_project_wizard" type="object"
                     string="Create Project"
                     class="btn btn-primary btn-sm"
