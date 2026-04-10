@@ -28,16 +28,15 @@
                     class="btn btn-outline-primary btn-sm"
                     invisible="not project_id"
                     groups="project.group_project_user"/>
-                <field name="project_progress" widget="gauge"
-                    string=""
-                    nolabel="1"
-                    invisible="not project_id"
-                    groups="project.group_project_user"
-                    options="{'max_value': 100, 'label': '', 'title': ''}"/>
                 <button name="action_create_project_wizard" type="object"
                     string="Create Project"
                     class="btn btn-primary btn-sm"
                     invisible="project_id or not product_id or not id"
+                    groups="project.group_project_user"/>
+                <field name="project_progress" widget="percentpie"
+                    string=""
+                    nolabel="1"
+                    invisible="not project_id"
                     groups="project.group_project_user"/>
             </xpath>
         </field>
