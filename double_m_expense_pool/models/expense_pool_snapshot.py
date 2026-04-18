@@ -51,6 +51,11 @@ class ExpensePoolSnapshot(models.Model):
         today = fields.Date.context_today(self)
         self.create_snapshot_for_date(today)
 
+    def action_generate_current_month(self):
+        """Button in the list header to generate the current month snapshot."""
+        self.env['expense.pool.snapshot'].create_snapshot_for_date()
+        return {'type': 'ir.actions.client', 'tag': 'reload'}
+
     # ------------------------------------------------------------------
     # Snapshot generation
     # ------------------------------------------------------------------
