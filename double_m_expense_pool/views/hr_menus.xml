@@ -1,9 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!-- Top-level menu under Employees -->
     <menuitem id="menu_expense_pool"
         name="Expense Pool"
         parent="hr.menu_hr_root"
-        action="action_expense_pool"
         sequence="25"
         groups="hr.group_hr_user"/>
+
+    <!-- Main view: snapshots (list + pie chart) -->
+    <menuitem id="menu_expense_pool_snapshots"
+        name="Snapshots"
+        parent="menu_expense_pool"
+        action="action_expense_pool_snapshot"
+        sequence="10"/>
+
+    <!-- Secondary: department setup (assign analytic accounts) -->
+    <menuitem id="menu_expense_pool_departments"
+        name="Department Setup"
+        parent="menu_expense_pool"
+        action="action_expense_pool"
+        sequence="20"/>
 </odoo>

@@ -27,26 +27,13 @@
         </field>
     </record>
 
-    <!-- Expense Pool pie chart view -->
-    <record id="view_department_expense_pool_graph" model="ir.ui.view">
-        <field name="name">hr.department.expense.pool.graph</field>
-        <field name="model">hr.department</field>
-        <field name="arch" type="xml">
-            <graph string="Expense Pool Allocation" type="pie">
-                <field name="name"/>
-                <field name="total_employee" type="measure"/>
-            </graph>
-        </field>
-    </record>
-
-    <!-- Action -->
+    <!-- Action: department list (quick reference for setting up analytic accounts) -->
     <record id="action_expense_pool" model="ir.actions.act_window">
-        <field name="name">Expense Pool Allocation</field>
+        <field name="name">Department Setup</field>
         <field name="res_model">hr.department</field>
-        <field name="view_mode">list,graph</field>
+        <field name="view_mode">list</field>
         <field name="domain">[('analytic_account_id', '!=', False)]</field>
         <field name="view_ids" eval="[(5, 0, 0),
-            (0, 0, {'view_mode': 'list', 'view_id': ref('view_department_expense_pool_list')}),
-            (0, 0, {'view_mode': 'graph', 'view_id': ref('view_department_expense_pool_graph')})]"/>
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_department_expense_pool_list')})]"/>
     </record>
 </odoo>

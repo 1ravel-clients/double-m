@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================ -->
+    <!--  Form                                                         -->
+    <!-- ============================================================ -->
+    <record id="expense_pool_snapshot_form" model="ir.ui.view">
+        <field name="name">expense.pool.snapshot.form</field>
+        <field name="model">expense.pool.snapshot</field>
+        <field name="arch" type="xml">
+            <form string="Expense Pool Snapshot">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="department_id"/>
+                            <field name="analytic_account_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group>
+                            <field name="date"/>
+                            <field name="headcount"/>
+                            <field name="percentage"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!--  List (editable)                                              -->
+    <!-- ============================================================ -->
+    <record id="expense_pool_snapshot_list" model="ir.ui.view">
+        <field name="name">expense.pool.snapshot.list</field>
+        <field name="model">expense.pool.snapshot</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="department_id"/>
+                <field name="analytic_account_id"/>
+                <field name="date"/>
+                <field name="headcount" sum="Total"/>
+                <field name="percentage" sum="Total"/>
+                <field name="company_id" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!--  Pie chart                                                    -->
+    <!-- ============================================================ -->
+    <record id="expense_pool_snapshot_graph" model="ir.ui.view">
+        <field name="name">expense.pool.snapshot.graph</field>
+        <field name="model">expense.pool.snapshot</field>
+        <field name="arch" type="xml">
+            <graph string="Expense Pool Distribution" type="pie" sample="1">
+                <field name="department_id"/>
+                <field name="headcount" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!--  Search                                                       -->
+    <!-- ============================================================ -->
+    <record id="expense_pool_snapshot_search" model="ir.ui.view">
+        <field name="name">expense.pool.snapshot.search</field>
+        <field name="model">expense.pool.snapshot</field>
+        <field name="arch" type="xml">
+            <search string="Expense Pool Snapshots">
+                <field name="department_id"/>
+                <field name="analytic_account_id"/>
+                <filter name="current_month" string="Current Month"
+                    domain="[('date', '&gt;=', (context_today()).strftime('%Y-%m-01')),
+                             ('date', '&lt;', ((context_today() + relativedelta(months=1)).replace(day=1)).strftime('%Y-%m-%d'))]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter name="group_department" string="Department"
+                        context="{'group_by': 'department_id'}"/>
+                    <filter name="group_date" string="Period"
+                        context="{'group_by': 'date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!--  Action                                                       -->
+    <!-- ============================================================ -->
+    <record id="action_expense_pool_snapshot" model="ir.actions.act_window">
+        <field name="name">Expense Pool</field>
+        <field name="res_model">expense.pool.snapshot</field>
+        <field name="view_mode">list,graph,form</field>
+        <field name="search_view_id" ref="expense_pool_snapshot_search"/>
+        <field name="context">{'search_default_current_month': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No snapshots yet
+            </p>
+            <p>
+                Snapshots are generated automatically on the 1st of each month.
+                You can also generate one manually or create records here.
+            </p>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!--  Server action: generate snapshot now                         -->
+    <!-- ============================================================ -->
+    <record id="action_generate_snapshot_now" model="ir.actions.server">
+        <field name="name">Generate Snapshot Now</field>
+        <field name="model_id" ref="model_expense_pool_snapshot"/>
+        <field name="binding_model_id" ref="model_expense_pool_snapshot"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+model.create_snapshot_for_date()
+        </field>
+    </record>
+
+</odoo>
