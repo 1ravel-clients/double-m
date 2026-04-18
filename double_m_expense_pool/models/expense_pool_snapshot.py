@@ -36,13 +36,10 @@ class ExpensePoolSnapshot(models.Model):
         default=lambda self: self.env.company,
     )
 
-    _sql_constraints = [
-        (
-            'unique_dept_date',
-            'unique(department_id, date)',
-            'Only one snapshot per department per month.',
-        ),
-    ]
+    _unique_dept_date = models.Constraint(
+        'unique(department_id, date)',
+        'Only one snapshot per department per month.',
+    )
 
     # ------------------------------------------------------------------
     # Cron
