@@ -8,9 +8,9 @@ patch(AnalyticDistribution.prototype, {
      * and load them into the analytic distribution popup.
      */
     async onApplyExpensePool() {
-        const record = this.props.record;
-        // Get the parent move id from the line record
-        const moveId = record.data.move_id && record.data.move_id[0];
+        // The widget lives on an invoice line inside a one2many;
+        // model.root is the parent form record (account.move).
+        const moveId = this.props.record.model.root.resId;
         if (!moveId) {
             return;
         }
