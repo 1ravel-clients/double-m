@@ -7,6 +7,13 @@
         sequence="25"
         groups="hr.group_hr_user"/>
 
+    <!-- Generate snapshot for the current month, then show the list -->
+    <menuitem id="menu_generate_snapshot"
+        name="Generate Current Month"
+        parent="menu_expense_pool"
+        action="action_generate_snapshot_now"
+        sequence="5"/>
+
     <!-- Main view: snapshots (list + pie chart) -->
     <menuitem id="menu_expense_pool_snapshots"
         name="Snapshots"

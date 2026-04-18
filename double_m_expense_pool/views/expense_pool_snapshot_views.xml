@@ -107,13 +107,13 @@
     <!--  Server action: generate snapshot now                         -->
     <!-- ============================================================ -->
     <record id="action_generate_snapshot_now" model="ir.actions.server">
-        <field name="name">Generate Snapshot Now</field>
+        <field name="name">Generate Current Month</field>
         <field name="model_id" ref="model_expense_pool_snapshot"/>
-        <field name="binding_model_id" ref="model_expense_pool_snapshot"/>
-        <field name="binding_view_types">list</field>
         <field name="state">code</field>
         <field name="code">
 model.create_snapshot_for_date()
+action = env.ref('double_m_expense_pool.action_expense_pool_snapshot').sudo().read()[0]
+action['context'] = {'search_default_current_month': 1}
         </field>
     </record>
 
