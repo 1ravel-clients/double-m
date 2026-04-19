@@ -1,3 +1,5 @@
+from dateutil.relativedelta import relativedelta
+
 from odoo import api, fields, models
 
 
@@ -50,6 +52,36 @@ class ExpensePoolSnapshot(models.Model):
         """Called by the scheduled action on the 1st of each month."""
         today = fields.Date.context_today(self)
         self.create_snapshot_for_date(today)
+
+    @api.model
+    def _cron_refresh_deferred_distributions(self):
+        """Rewrite analytic_distribution on this month's deferred-entry lines.
+
+        Runs on the 2nd of each month, after _cron_create_monthly_snapshot.
+        For every account.move.line that:
+          - is flagged is_expense_pool_distributed=True
+          - belongs to an Odoo-generated deferred entry (its move has
+            deferred_original_move_ids set)
+          - is dated in the current month and posted
+
+        ...replace its analytic_distribution with this month's snapshot. Lines
+        for months without a snapshot are left untouched.
+        """
+        today = fields.Date.context_today(self)
+        first_of_month = today.replace(day=1)
+        next_month = first_of_month + relativedelta(months=1)
+        distribution = self.get_distribution_for_date(first_of_month)
+        if not distribution:
+            return
+        lines = self.env['account.move.line'].search([
+            ('is_expense_pool_distributed', '=', True),
+            ('parent_state', '=', 'posted'),
+            ('date', '>=', first_of_month),
+            ('date', '<', next_month),
+            ('move_id.deferred_original_move_ids', '!=', False),
+        ])
+        for line in lines:
+            line.analytic_distribution = distribution
 
     def action_generate_current_month(self):
         """Button in the list header to generate the current month snapshot."""

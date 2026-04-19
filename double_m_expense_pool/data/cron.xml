@@ -10,4 +10,15 @@
         <field name="nextcall" eval="(DateTime.now().replace(day=1, hour=2, minute=0, second=0) + relativedelta(months=1)).strftime('%Y-%m-%d %H:%M:%S')"/>
         <field name="active">True</field>
     </record>
+
+    <record id="ir_cron_expense_pool_refresh_deferred" model="ir.cron">
+        <field name="name">Expense Pool: Refresh Deferred Distributions</field>
+        <field name="model_id" ref="model_expense_pool_snapshot"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_refresh_deferred_distributions()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">months</field>
+        <field name="nextcall" eval="(DateTime.now().replace(day=2, hour=3, minute=0, second=0) + relativedelta(months=1)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="active">True</field>
+    </record>
 </odoo>

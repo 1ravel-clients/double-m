@@ -31,7 +31,10 @@ patch(AnalyticDistribution.prototype, {
             );
             return;
         }
-        await this.props.record.update({ [this.props.name]: distribution });
+        await this.props.record.update({
+            [this.props.name]: distribution,
+            is_expense_pool_distributed: true,
+        });
         await this.jsonToData(distribution);
     },
 });
