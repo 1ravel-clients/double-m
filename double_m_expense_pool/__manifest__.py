@@ -1,6 +1,6 @@
 {
     'name': 'Double M - Expense Pool Allocation',
-    'version': '19.0.3.0.0',
+    'version': '19.0.3.0.1',
     'category': 'Human Resources',
     'summary': 'Allocate general expenses across departments by headcount percentage with monthly snapshots',
     'author': '1Ravel',
